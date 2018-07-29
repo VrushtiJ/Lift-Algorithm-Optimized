@@ -1,4 +1,3 @@
-package lift.algo;
 
 import java.util.TreeSet;
 

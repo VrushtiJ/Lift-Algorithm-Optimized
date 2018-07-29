@@ -1,9 +1,8 @@
-package lift.algo;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
-import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -41,44 +40,47 @@ public class LiftAlgorithmMain {
 			while(itr.hasNext())
 			{
 				LiftProperties l = itr.next();
-				Runnable liftJob = new Runnable() {
+				if(!l.status.equals(LiftStatus.STILL)) {
+					Runnable liftJob = new Runnable() {
 
-					@Override
-					public void run() {
-						try {
-							System.out.println(this.hashCode()+" is running.. Lift "+l.hashCode()+" status"+l.status);
-							if(LiftStatus.DOWN.equals(l.status))
-							{
-								for(int i : l.floorSet.descendingSet())
+						@Override
+						public void run() {
+							try {
+								System.out.println(this.hashCode()+" is running.. Lift "+l.hashCode()+" status"+l.status);
+								if(LiftStatus.DOWN.equals(l.status))
 								{
-									System.out.println("Passing "+i+"  floor.........................");
-									System.out.println("HASHCODE of the lift "+ l.hashCode()+" -- Current floor is "+i+" Going "+l.status);
-									l.floorSet.remove(i);
-									Thread.sleep(10000);
+									for(int i : l.floorSet.descendingSet())
+									{
+										System.out.println("Passing "+i+"  floor.........................");
+										System.out.println("HASHCODE of the lift "+ l.hashCode()+" -- Current floor is "+i+" Going "+l.status);
+										l.floorSet.remove(i);
+										Thread.sleep(10000);
+									}
 								}
-							}
-							else if(LiftStatus.UP.equals(l.status))
-							{
-								for(int i : l.floorSet)
+								else if(LiftStatus.UP.equals(l.status))
 								{
-									System.out.println("Passing "+i+"  floor.........................");
-									System.out.println("HASHCODE of the lift "+ l.hashCode()+" -- Current floor is "+i+" Going "+l.status);
-									l.floorSet.remove(i);
-									Thread.sleep(10000);
+									for(int i : l.floorSet)
+									{
+										System.out.println("Passing "+i+"  floor.........................");
+										System.out.println("HASHCODE of the lift "+ l.hashCode()+" -- Current floor is "+i+" Going "+l.status);
+										l.floorSet.remove(i);
+										Thread.sleep(10000);
+									}
 								}
+								else
+								{
+									System.out.println(" Lift "+l.hashCode()+" status"+l.status);
+								}
+								l.status=LiftStatus.STILL;
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
-							else
-							{
-								System.out.println(" Lift "+l.hashCode()+" status"+l.status);
-							}
-							l.status=LiftStatus.STILL;
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
 						}
-					}
-				};
-				executorService.execute(liftJob);
+					};
+					executorService.execute(liftJob);
+				}
+				
 			}
 			//	}
 			System.out.println("No input is found");

@@ -1,6 +1,6 @@
-package lift.algo;
 
-enum LiftStatus {
+
+public enum LiftStatus {
 	UP,
 	DOWN,
 	STILL;
