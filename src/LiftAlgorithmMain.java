@@ -36,7 +36,7 @@ public class LiftAlgorithmMain {
 		System.out.println("No input is found");
 		 */
 
-		System.out.println("Lift size ==========="+lifts.size());
+		System.out.println("Lift size =========== "+lifts.size());
 		Iterator<LiftProperties> itr = (Iterator<LiftProperties>) lifts.iterator(); 
 
 		while(itr.hasNext())
@@ -48,7 +48,7 @@ public class LiftAlgorithmMain {
 				@Override
 				public void run() {
 					try {
-						System.out.println(" is running.. Lift "+l.hashCode()+" status"+l.status);
+						System.out.println("Thread is running.. Lift "+l.hashCode()+" status"+l.status);
 						if(LiftStatus.DOWN.equals(l.status))
 						{
 							for(int i : l.floorSet.descendingSet())
@@ -59,7 +59,7 @@ public class LiftAlgorithmMain {
 								l.floorSet.remove(i);
 								Thread.sleep(10000);
 								if(scan.hasNext()) {
-									l.notify();
+									//l.notify();
 									checkIfInputFound();
 								}
 							}
@@ -74,7 +74,7 @@ public class LiftAlgorithmMain {
 								l.floorSet.remove(i);
 								Thread.sleep(10000);
 								if(scan.hasNext()) {
-									l.notify();
+									//l.notify();
 									checkIfInputFound();
 								}
 							}
@@ -89,7 +89,7 @@ public class LiftAlgorithmMain {
 						}
 						else
 						{
-							System.out.println(" Lift "+l.hashCode()+" status"+l.status);
+							System.out.println(" Lift "+l.hashCode()+" status "+l.status);
 							l.status=LiftStatus.STILL;
 							synchronized(l) {
 								System.out.println("waiting "+l.hashCode());
@@ -215,8 +215,15 @@ public class LiftAlgorithmMain {
 		toBeUsedLift.status = finalStatus;
 		System.out.println(lifts.get(finalIndex).hashCode()+"  notifying this thread "+lifts.get(finalIndex).status);
 		if(lifts.get(finalIndex).status.equals(LiftStatus.STILL))
-			lifts.get(finalIndex).notify();
-		//	return toBeUsedLift;
+		{
+			synchronized(lifts.get(finalIndex))
+			{	
+				lifts.get(finalIndex).floorSet.add(reqFloor);
+				lifts.get(finalIndex).status = finalStatus;
+				lifts.get(finalIndex).notify();
+			}
+			//	return toBeUsedLift;
+		}
 
 	}
 }
